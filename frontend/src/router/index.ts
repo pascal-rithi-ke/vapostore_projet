@@ -4,9 +4,9 @@ import Home from '../views/HomeView.vue'
 
 import Login from '../views/LoginView.vue'
 import Register from '../views/RegisterView.vue'
+import Cart from '../views/CartView.vue'
 
 import Presentation from '../views/Presentation.vue'
-import Cart from '../views/CartView.vue'
 
 import Error from '../views/ErrorView.vue'
 
