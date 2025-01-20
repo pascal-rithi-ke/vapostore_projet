@@ -32,15 +32,15 @@ export default {
         },
     },
     methods: {
-        increaseQuantity(index) {
+        increaseQuantity(index: number) {
             this.cart[index].quantity++;
         },
-        decreaseQuantity(index) {
+        decreaseQuantity(index: number){
             if (this.cart[index].quantity > 1) {
                 this.cart[index].quantity--;
             }
         },
-        removeItem(index) {
+        removeItem(index: number) {
             this.cart.splice(index, 1);
         },
         checkout() {
@@ -101,12 +101,12 @@ export default {
 
             <!-- Cart Summary -->
             <div v-if="cart.length" class="mt-6">
-                <div class="flex justify-between items-center border-t pt-4">
+                <div class="flex justify-between items-center">
                     <h3 class="text-lg font-semibold">Total:</h3>
                     <p class="text-xl font-bold text-gray-800">{{ totalPrice.toFixed(2) }}€</p>
                 </div>
                 <button class="mt-4 w-full bg-primary text-white py-2 rounded-md hover:bg-secondary" @click="checkout">
-                    Confirmer l'achat
+                    Passer commande
                 </button>
             </div>
         </div>

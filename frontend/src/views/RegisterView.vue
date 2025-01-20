@@ -1,10 +1,9 @@
 <script lang="ts">
-import router from '../router';
-
 export default {
     data() {
         return {
             name: "",
+            surname: "",
             email: "",
             password: "",
             confirmPassword: "",
@@ -17,6 +16,7 @@ export default {
                 return;
             }
             console.log("Name:", this.name);
+            console.log("Surname:", this.surname);
             console.log("Email:", this.email);
             console.log("Password:", this.password);
             // Ajoute ici la logique pour gérer l'inscription
@@ -32,7 +32,7 @@ export default {
             <form @submit.prevent="handleSubmit" class="space-y-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-600">Nom</label>
-                    <input type="text" id="name" v-model="name" placeholder="Entrer votre nom complet"
+                    <input type="text" id="name" v-model="name" placeholder="Entrer votre nom"
                         class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
                         required />
                 </div>
@@ -68,8 +68,9 @@ export default {
                 </button>
             </form>
             <p class="text-sm text-center hover:text-secondary">
-                Vous avez déjà un compte ?
-                <router-link to="/login">Connectez-vous</router-link>
+                <router-link to="/login">
+                    Vous avez déjà un compte ? Connectez-vous
+                </router-link>
             </p>
         </div>
     </div>
