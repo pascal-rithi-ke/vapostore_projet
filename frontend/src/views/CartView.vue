@@ -43,9 +43,6 @@ export default {
         removeItem(index: number) {
             this.cart.splice(index, 1);
         },
-        checkout() {
-            alert("Proceeding to checkout!");
-        },
     },
 };
 </script>
@@ -105,9 +102,11 @@ export default {
                     <h3 class="text-lg font-semibold">Total:</h3>
                     <p class="text-xl font-bold text-gray-800">{{ totalPrice.toFixed(2) }}€</p>
                 </div>
-                <button class="mt-4 w-full bg-primary text-white py-2 rounded-md hover:bg-secondary" @click="checkout">
-                    Passer commande
-                </button>
+                <router-link to="checkout">
+                    <button class="mt-4 w-full bg-primary text-white py-2 rounded-md hover:bg-secondary">
+                        Valider le panier
+                    </button>
+                </router-link>
             </div>
         </div>
     </div>

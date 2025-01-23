@@ -1,14 +1,15 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 
-import Home from '../views/HomeView.vue'
+import Home from '../views/HomeView.vue';
 
-import Login from '../views/LoginView.vue'
-import Register from '../views/RegisterView.vue'
-import Cart from '../views/CartView.vue'
+import Login from '../views/LoginView.vue';
+import Register from '../views/RegisterView.vue';
+import Cart from '../views/CartView.vue';
+import Checkout from '../views/CheckoutView.vue';
 
-import Presentation from '../views/Presentation.vue'
+import Presentation from '../views/Presentation.vue';
 
-import Error from '../views/ErrorView.vue'
+import Error from '../views/ErrorView.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -35,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/cart',
         name: 'Cart',
         component: Cart
+    },
+    {
+        path: '/checkout',
+        name: 'Checkout',
+        component: Checkout
     },
     /* Page d'erreur */
     {
