@@ -10,10 +10,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 // Routes pour les utilisateurs
 Route::post('/register', [UserController::class, 'register']); // Ajouter un utilisateur
 Route::get('/users/{id}', [UserController::class, 'showOne']);    // Afficher un utilisateur spécifique
