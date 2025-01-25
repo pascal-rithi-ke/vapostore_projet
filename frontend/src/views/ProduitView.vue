@@ -35,6 +35,11 @@ const goBack = () => {
     router.go(-1); // Retourne à la page précédente
 };
 
+const addToCart = () => {
+    // Logic to add the product to the cart
+    console.log(`Added ${quantity.value} of ${product.value?.name} to cart`);
+};
+
 onMounted(fetchProduct);
 </script>
 
@@ -48,7 +53,7 @@ onMounted(fetchProduct);
                 :to="`/produit/categorie/${route.query.categoryId}/${route.query.categoryName}`" 
                 class="hover:underline"
             >
-                {{ route.query.categoryName?.replace(/_/g, ' ') || 'Catégorie' }}
+                {{ typeof route.query.categoryName === 'string' ? route.query.categoryName.replace(/_/g, ' ') : 'Catégorie' }}
             </router-link>
             <span class="mx-2">/</span>
             <span class="font-bold">{{ product?.name || 'Produit' }}</span>
