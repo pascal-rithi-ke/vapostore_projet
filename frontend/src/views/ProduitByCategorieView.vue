@@ -42,6 +42,13 @@ onMounted(fetchProducts);
 
 <template>
     <div class="container mx-auto my-8">
+        <!-- Fil d'Ariane -->
+        <nav class="mb-4 text-sm text-gray-600">
+            <router-link to="/" class="hover:underline">Accueil</router-link>
+            <span class="mx-2">/</span>
+            <span class="font-bold">{{ categoryName }}</span>
+        </nav>
+
         <!-- Affichage du titre -->
         <h2 class="text-2xl font-bold mb-4">Nos Produits de la catégorie "{{ categoryName }}"</h2>
 
@@ -55,11 +62,18 @@ onMounted(fetchProducts);
             <div v-for="product in products" :key="product.id" class="bg-white shadow-md rounded-lg w-64 p-4">
                 <img :src="product.image" :alt="product.name" class="w-full h-32 object-cover rounded-lg" />
                 <h3 class="text-lg font-bold">{{ product.name }}</h3>
-                <router-link :to="`/produit/${product.id}/name/${normalizeName(product.name)}`">
+                <router-link :to="{
+                    path: `/produit/${product.id}/name/${normalizeName(product.name)}`,
+                    query: {
+                        categoryId: route.params.id,
+                        categoryName: route.params.name
+                    }
+                }">
                     <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">
                         Voir plus
                     </button>
                 </router-link>
+
                 <p class="text-primary text-2xl font-bold mt-4">{{ product.price }} €</p>
             </div>
         </div>
