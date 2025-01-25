@@ -1,5 +1,6 @@
 <script>
 import axios from "axios";
+import { useAuthStore } from "../stores/auth"; // Importer le store auth
 
 axios.defaults.baseURL = "http://localhost:8000";
 
@@ -13,14 +14,25 @@ export default {
     },
     methods: {
         async handleSubmit() {
+            const authStore = useAuthStore(); // Accéder au store Pinia
             try {
+                // Effectuer la requête de connexion
                 await axios.post("/api/login", {
                     email: this.email,
                     password: this.password,
                 });
-                this.$router.push("/");
+
+                // Mettre à jour l'état d'authentification dans Pinia
+                await authStore.fetchAuthStatus();
+
+                // Rediriger vers le tableau de bord
+                this.$router.push("/dashboard");
             } catch (error) {
-                this.errorMessage = error.response?.data?.message || "Erreur de connexion";
+                if (axios.isAxiosError(error)) {
+                    this.errorMessage = error.response?.data?.message || "Erreur de connexion";
+                } else {
+                    this.errorMessage = "Erreur de connexion";
+                }
             }
         },
     },
