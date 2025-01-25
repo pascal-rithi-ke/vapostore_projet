@@ -23,12 +23,12 @@ const routes: Array<RouteRecordRaw> = [
         component: Home
     },
     {
-        path: '/produit/:id',
+        path: '/produit/:id/name/:name',
         name: 'Produit',
         component: Produit,
     },
     {
-        path: '/produit/categorie/:id',
+        path: '/produit/categorie/:id/:name',
         name: 'ProduitByCategorie',
         component: ProduitByCategorie,
     },

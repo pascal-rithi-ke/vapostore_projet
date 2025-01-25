@@ -5,6 +5,8 @@ import materiel from '../assets/materiel.jpg';
 import DIY from '../assets/DIY.jpg';
 import accessoires from '../assets/accessoires.jpg';
 
+import normalizeName from '../utils/fct';
+
 const products = [
   {
     name: "Accessoires",
@@ -58,7 +60,7 @@ const products = [
         <div class="p-4 text-center">
           <h3 class="text-lg font-bold mb-2">{{ product.name }}</h3>
           <p class="text-gray-600">{{ product.description }}</p>
-          <router-link :to="{ path: `/produit/categorie/${product.id}`, query: { name: product.name } }">
+          <router-link :to="`/produit/categorie/${product.id}/${normalizeName(product.name)}`">
             <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">
               Découvrir
             </button>

@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 
+import normalizeName from '../utils/fct';
+
 // Interface pour représenter un produit
 interface Product {
     id: number;
@@ -12,28 +14,25 @@ interface Product {
     image: string;
 }
 
-// Liste des produits de la catégorie
 const products = ref<Product[]>([]);
 
-// Nom de la catégorie
 const categoryName = ref<string>('');
 
-// Accès à la route actuelle
 const route = useRoute();
 
 // Fonction pour récupérer les produits d'une catégorie
 const fetchProducts = async () => {
-    const { id } = route.params; // ID de la catégorie
-    categoryName.value = (route.query.name as string) || "Inconnue"; // Nom de la catégorie, avec un fallback
+    const { id, name } = route.params; // Récupère ID et nom de la catégorie
+    categoryName.value = typeof name === 'string' ? name.replace(/_/g, ' ') : 'Inconnue'; // Transforme les underscores en espaces
     try {
-        const response = await axios.get(`/api/products/type/${id}`); // Appel API
+        const response = await axios.get(`/api/products/type/${id}`); // Appel API avec l'ID de la catégorie
         products.value = response.data; // Mise à jour des produits
     } catch (error) {
         console.error('Erreur lors du chargement des produits :', error);
     }
 };
 
-// Charger les produits au montage du composant
+// Charger les produits au montage
 onMounted(fetchProducts);
 </script>
 
@@ -45,7 +44,7 @@ onMounted(fetchProducts);
             <div v-for="product in products" :key="product.id" class="bg-white shadow-md rounded-lg w-64 p-4">
                 <img :src="product.image" :alt="product.name" class="w-full h-32 object-cover rounded-lg" />
                 <h3 class="text-lg font-bold">{{ product.name }}</h3>
-                <router-link :to="`/produit/${product.id}`">
+                <router-link :to="`/produit/${product.id}/name/${normalizeName(product.name)}`">
                     <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">
                         Voir plus
                     </button>
