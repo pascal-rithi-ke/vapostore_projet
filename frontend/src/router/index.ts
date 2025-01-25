@@ -2,6 +2,8 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js';
 
 import Home from '../views/HomeView.vue';
+import ProduitByCategorie from '../views/ProduitByCategorieView.vue';
+import Produit from '../views/ProduitView.vue';
 
 import Login from '../views/LoginView.vue';
 import Register from '../views/RegisterView.vue';
@@ -19,6 +21,16 @@ const routes: Array<RouteRecordRaw> = [
         path: '/',
         name: 'Home',
         component: Home
+    },
+    {
+        path: '/produit/:id',
+        name: 'Produit',
+        component: Produit,
+    },
+    {
+        path: '/produit/categorie/:id',
+        name: 'ProduitByCategorie',
+        component: ProduitByCategorie,
     },
     {
         path: '/login',
@@ -46,12 +58,18 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/cart',
         name: 'Cart',
-        component: Cart
+        component: Cart,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/checkout',
         name: 'Checkout',
-        component: Checkout
+        component: Checkout,
+        meta: {
+            requiresAuth: true
+        }
     },
     /* Page d'erreur */
     {

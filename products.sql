@@ -18,7 +18,7 @@ INSERT INTO products (name, price, image, description, type_id)
 VALUES (
         'Câble USB / Micro USB E-Leaf',
         '2,20 €',
-        'https://www.vapostore.com/chargeurs/941-cable-usb-micro-usb-e-leaf.html',
+        'https://www.vapostore.com/2248-large_default/cable-usb-micro-usb-e-leaf.jpg',
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         1
     );

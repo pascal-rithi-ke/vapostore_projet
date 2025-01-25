@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -22,7 +23,8 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('/user', [AuthController::class, 'getUser'])->middleware('auth:sanctum');
 
 // Route pour les produits
-Route::get('/product/{id}', [ProductController::class, 'showOne']); // Afficher un produit spécifique
+Route::get('/products/type/{id}', [ProductController::class, 'showAll']); // Afficher tous les produits par catégorie
+Route::get('/products/{id}', [ProductController::class, 'showOne']); // Afficher un produit spécifique
 
 // Route pour les paniers
 Route::get('/cart/{id}', [CartController::class, 'showOne'])->middleware('auth:sanctum'); // Afficher un produit du panier
