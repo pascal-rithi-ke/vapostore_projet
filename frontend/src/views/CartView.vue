@@ -1,6 +1,5 @@
 <script lang="ts">
 import axios from "axios";
-import { ref } from "vue";
 
 export default {
     data() {
