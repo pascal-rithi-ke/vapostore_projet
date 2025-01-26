@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    // Les attributs
     protected $fillable = [
         'user_id',
-        'product_id',
-        'quantity',
-        'total',
-        'price',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 
     public function user()
     {
@@ -24,7 +24,10 @@ class Cart extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class)->withPivot('quantity', 'price');
+        // Relation pivot pour accéder à `CartProduct`
+        return $this->belongsToMany(Product::class, 'cart_products')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
     }
 
     public function orders()

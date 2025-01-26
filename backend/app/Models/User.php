@@ -58,4 +58,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    public function checkCart()
+    {
+        // Vérifier si l'utilisateur a un panier
+        if ($this->carts->count() === 0) {
+            // Créer un panier pour l'utilisateur
+            $cart = new Cart();
+            $cart->user_id = $this->id;
+            $cart->save();
+        }
+    }
 }

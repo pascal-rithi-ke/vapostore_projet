@@ -4,23 +4,32 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\User;
+
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate user credentials
+        // Validation des informations d'identification
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return $this->failedRequest('', 'Invalid email address or password', 400);
         }
-
-        // Regenerate the user's session to prevent session fixation
+    
+        // Régénération de la session
         $request->session()->regenerate();
-
-        // Sign in user
-        Auth::login(Auth::user());
-
-        // Return data
-        return $this->successfullRequest(Auth::user(), 'User successfully logged in', 200);
+    
+        // Récupération de l'utilisateur connecté
+        $user = User::where('email', $request->email)->first();
+    
+        // Récupérer le panier actif ou en créer un nouveau
+        $cart = $user->carts()->active()->firstOrCreate([
+            'user_id' => $user->id,
+        ]);
+    
+        return $this->successfullRequest([
+            'user' => $user,
+            'cart' => $cart
+        ], 'Connected successfully', 200);
     }
 
     public function logout(Request $request)

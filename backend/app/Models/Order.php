@@ -6,15 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    // Les attributs
     protected $fillable = [
         'user_id',
+        'cart_id',
         'total_price',
         'item_number',
         'status',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
+
+    // Status constants
+    const STATUS_PENDING = 'pending';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_CANCELLED = 'cancelled';
 
     public function user()
     {
