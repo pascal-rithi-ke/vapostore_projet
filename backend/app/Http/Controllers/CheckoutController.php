@@ -10,6 +10,7 @@ class CheckoutController extends Controller
     {
         $request->validate([
             'address' => 'required|string',
+            'city' => 'required|string',
             'postal_code' => 'required|string',
             'total_price' => 'required|numeric',
             'total_quantity' => 'required|integer',
@@ -29,14 +30,15 @@ class CheckoutController extends Controller
         // Crée une nouvelle commande
         $order = $user->orders()->create([
             'address' => $request->address,
+            'city' => $request->city,
             'postal_code' => $request->postal_code,
             'total_price' => $request->total_price,
-            'total_quantity' => $request->total_quantity,
+            'item_number' => $request->total_quantity,
             'cart_id' => $cart->id,
         ]);
 
         // Marque le panier comme inactif
-        $cart->update(['is_active' => false]);
+        $cart->update(['is_active' => 0]);
 
         // Crée un nouveau panier actif
         $user->carts()->create([
