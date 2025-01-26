@@ -41,7 +41,8 @@ export default {
 
 <template>
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
-        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
+        <!-- Formulaire -->
+        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md mx-4 sm:mx-8 lg:mx-8">
             <h1 class="text-2xl font-bold text-center text-gray-700">Connectez-vous</h1>
             <form @submit.prevent="handleSubmit" class="space-y-4">
                 <div>
@@ -54,7 +55,7 @@ export default {
                 <div>
                     <label for="password" class="block text-sm text-gray-800 font-semibold">Mot de passe<span
                             class="text-red-700">*</span></label>
-                    <input type="password" id="password" v-model="password" placeholder="Entrer votre mot de passe"
+                    <input type="password" id="password" placeholder="Entrer votre mot de passe" v-model="password"
                         class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
                         required />
                 </div>

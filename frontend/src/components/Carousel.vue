@@ -1,70 +1,3 @@
-<script lang="ts">
-import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
-
-// Importez explicitement les images
-import carouselImage1 from '../assets/carousel-1.jpg';
-import carouselImage2 from '../assets/carousel-2.jpg';
-import carouselImage3 from '../assets/carousel-3.jpg';
-
-export default defineComponent({
-    name: 'AdjustableHeightCarousel',
-    setup() {
-        // Define the slides
-        const slides = ref([
-            { title: 'Slide 1', image: carouselImage1 },
-            { title: 'Slide 2', image: carouselImage2 },
-            { title: 'Slide 3', image: carouselImage3 },
-        ]);
-
-        // Current slide index
-        const currentIndex = ref(0);
-
-        // Navigate to a specific slide
-        const goToSlide = (index: number) => {
-            currentIndex.value = index;
-        };
-
-        // Navigate to the next slide
-        const goToNextSlide = () => {
-            currentIndex.value = (currentIndex.value + 1) % slides.value.length;
-        };
-
-        // Navigate to the previous slide
-        const goToPreviousSlide = () => {
-            currentIndex.value =
-                (currentIndex.value - 1 + slides.value.length) % slides.value.length;
-        };
-
-        // Auto-scroll functionality
-        const startAutoScroll = () => {
-            return setInterval(() => {
-                goToNextSlide();
-            }, 3000); // Change slide every 3 seconds
-        };
-
-        let intervalId: number | null = null;
-
-        onMounted(() => {
-            intervalId = startAutoScroll();
-        });
-
-        onUnmounted(() => {
-            if (intervalId !== null) {
-                clearInterval(intervalId);
-            }
-        });
-
-        return {
-            slides,
-            currentIndex,
-            goToSlide,
-            goToNextSlide,
-            goToPreviousSlide,
-        };
-    },
-});
-</script>
-
 <template>
     <div class="relative w-full overflow-hidden">
         <!-- Carousel Container -->
@@ -75,11 +8,11 @@ export default defineComponent({
             <div
                 v-for="(slide, index) in slides"
                 :key="index"
-                class="flex-shrink-0 w-full h-[500px] flex items-center justify-center"
+                class="flex-shrink-0 w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center"
             >
                 <img
                     :src="slide.image"
-                    class="w-full h-full object-cover"
+                    class="w-full h-full object-contain"
                 />
             </div>
         </div>
@@ -106,7 +39,7 @@ export default defineComponent({
                 viewBox="0 0 24 24"
                 stroke-width="2"
                 stroke="currentColor"
-                class="w-6 h-6"
+                class="w-5 h-5 md:w-6 md:h-6"
             >
                 <path
                     stroke-linecap="round"
@@ -125,7 +58,7 @@ export default defineComponent({
                 viewBox="0 0 24 24"
                 stroke-width="2"
                 stroke="currentColor"
-                class="w-6 h-6"
+                class="w-5 h-5 md:w-6 md:h-6"
             >
                 <path
                     stroke-linecap="round"
@@ -136,6 +69,66 @@ export default defineComponent({
         </button>
     </div>
 </template>
+
+<script lang="ts">
+import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
+
+import carouselImage1 from '../assets/carousel-1.jpg';
+import carouselImage2 from '../assets/carousel-2.jpg';
+import carouselImage3 from '../assets/carousel-3.jpg';
+
+export default defineComponent({
+    name: 'AdjustableHeightCarousel',
+    setup() {
+        const slides = ref([
+            { title: 'Slide 1', image: carouselImage1 },
+            { title: 'Slide 2', image: carouselImage2 },
+            { title: 'Slide 3', image: carouselImage3 },
+        ]);
+
+        const currentIndex = ref(0);
+
+        const goToSlide = (index: number) => {
+            currentIndex.value = index;
+        };
+
+        const goToNextSlide = () => {
+            currentIndex.value = (currentIndex.value + 1) % slides.value.length;
+        };
+
+        const goToPreviousSlide = () => {
+            currentIndex.value =
+                (currentIndex.value - 1 + slides.value.length) % slides.value.length;
+        };
+
+        const startAutoScroll = () => {
+            return setInterval(() => {
+                goToNextSlide();
+            }, 3000);
+        };
+
+        let intervalId: number | null = null;
+
+        onMounted(() => {
+            intervalId = startAutoScroll();
+        });
+
+        onUnmounted(() => {
+            if (intervalId !== null) {
+                clearInterval(intervalId);
+            }
+        });
+
+        return {
+            slides,
+            currentIndex,
+            goToSlide,
+            goToNextSlide,
+            goToPreviousSlide,
+        };
+    },
+});
+</script>
 
 <style scoped>
 .carousel-button {
@@ -160,17 +153,14 @@ export default defineComponent({
     color: black;
 }
 
-/* Bouton gauche */
 .carousel-button-left {
     left: 10px;
 }
 
-/* Bouton droit */
 .carousel-button-right {
     right: 10px;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
     .carousel-button {
         padding: 8px;

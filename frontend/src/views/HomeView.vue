@@ -14,7 +14,7 @@ export default {
 
 <template>
     <Carousel />
-    <div class="mx-40">
+    <div class="mx-5 lg:mx-40">
         <GoodPoint />
         <ProduitType />
     </div>

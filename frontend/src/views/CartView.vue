@@ -1,5 +1,6 @@
 <script lang="ts">
 import axios from "axios";
+import { ref } from "vue";
 
 export default {
     data() {
@@ -8,6 +9,9 @@ export default {
             pendingUpdates: {} as Record<number, { quantity: number | null }>, // Modifications en attente
             isLoading: true,
             error: null as string | null,
+            showPopup: false, // État de la popup
+            popupMessage: "", // Message de la popup
+            popupCallback: null as (() => void) | null, // Action à exécuter
         };
     },
     computed: {
@@ -19,10 +23,9 @@ export default {
         },
     },
     methods: {
-        // Récupère le panier actif depuis le backend
         async fetchCart() {
             try {
-                const response = await axios.get("/api/cart"); // Appelle l'API pour le panier actif
+                const response = await axios.get("/api/cart");
                 this.cart = response.data.data.map(
                     (item: { id: number; name: string; price: number; quantity: number; image?: string }) => ({
                         id: item.id,
@@ -40,7 +43,6 @@ export default {
             }
         },
 
-        // Augmente la quantité d'un produit
         increaseQuantity(productId: number) {
             const product = this.cart.find((item) => item.id === productId);
             if (product) {
@@ -49,7 +51,6 @@ export default {
             }
         },
 
-        // Diminue la quantité d'un produit
         decreaseQuantity(productId: number) {
             const product = this.cart.find((item) => item.id === productId);
             if (product && product.quantity > 1) {
@@ -58,37 +59,47 @@ export default {
             }
         },
 
-        // Supprime un produit du panier
-        removeFromCart(productId: number) {
-            this.cart = this.cart.filter((item) => item.id !== productId); // Mise à jour locale
-            this.pendingUpdates[productId] = { quantity: null }; // Indique une suppression au backend
+        confirmRemoveFromCart(productId: number) {
+            const product = this.cart.find((item) => item.id === productId);
+            if (!product) return;
+
+            // Configure la popup
+            this.popupMessage = `Êtes-vous sûr de vouloir supprimer "${product.name}" du panier ?`;
+            this.showPopup = true;
+
+            // Définir l'action à exécuter
+            this.popupCallback = () => {
+                this.removeFromCart(productId);
+                this.showPopup = false;
+            };
         },
 
-        // Synchronise les modifications avec le backend
+        removeFromCart(productId: number) {
+            this.cart = this.cart.filter((item) => item.id !== productId);
+            this.pendingUpdates[productId] = { quantity: null };
+        },
+
         async syncCart() {
             const updates = Object.keys(this.pendingUpdates).map((productId) => ({
                 product_id: Number(productId),
-                quantity: this.pendingUpdates[Number(productId)].quantity, // null pour suppression
+                quantity: this.pendingUpdates[Number(productId)].quantity,
             }));
 
-            if (updates.length === 0) return; // Pas de mise à jour nécessaire
+            if (updates.length === 0) return;
 
             try {
-                await axios.put("/api/update-cart-bulk", { updates }); // Appelle l'API de mise à jour
-                this.pendingUpdates = {}; // Réinitialise les modifications locales
+                await axios.put("/api/update-cart-bulk", { updates });
+                this.pendingUpdates = {};
             } catch (err) {
                 console.error("Erreur lors de la synchronisation du panier", err);
             }
         },
     },
     async mounted() {
-        await this.fetchCart(); // Charge le panier actif au montage
-
-        // Synchronisation périodique toutes les 5 secondes
+        await this.fetchCart();
         setInterval(this.syncCart, 5000);
     },
     beforeDestroy() {
-        // Synchronisation finale avant de quitter la page
         this.syncCart();
     },
 };
@@ -107,36 +118,48 @@ export default {
                 {{ error }}
             </div>
 
-            <div v-if="cart.length && !isLoading" class="space-y-4">
-                <div v-for="(item, __) in cart" :key="item.id"
-                    class="flex items-center justify-between border-b pb-4">
+            <div v-if="cart.length && !isLoading" class="space-y-6">
+                <div
+                    v-for="item in cart"
+                    :key="item.id"
+                    class="flex items-start justify-between border-b pb-6"
+                >
+                    <!-- Image et nom du produit -->
                     <div class="flex items-center space-x-4">
                         <img :src="item.image" alt="Product" class="w-16 h-16 object-cover rounded-md" />
                         <div>
                             <h2 class="text-gray-800 font-semibold">{{ item.name }}</h2>
-                            <p class="text-sm text-gray-600">Prix: {{ item.price }}€</p>
+                            <p class="text-sm text-gray-600">Prix unitaire : {{ item.price }}€</p>
                         </div>
                     </div>
 
-                    <div class="flex items-center space-x-2">
-                        <button class="px-2 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
-                            @click="decreaseQuantity(item.id)">
-                            -
-                        </button>
-                        <span class="px-3 py-1 border rounded-md">{{ item.quantity }}</span>
-                        <button class="px-2 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
-                            @click="increaseQuantity(item.id)">
-                            +
+                    <!-- Quantité et actions -->
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <button
+                                class="px-2 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
+                                @click="decreaseQuantity(item.id)"
+                            >
+                                -
+                            </button>
+                            <span class="px-3 py-1 border rounded-md">{{ item.quantity }}</span>
+                            <button
+                                class="px-2 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
+                                @click="increaseQuantity(item.id)"
+                            >
+                                +
+                            </button>
+                        </div>
+                        <p class="text-gray-800 font-semibold">
+                            {{ (item.price * item.quantity).toFixed(2) }}€
+                        </p>
+                        <button
+                            class="text-red-500 hover:text-red-700 text-sm"
+                            @click="confirmRemoveFromCart(item.id)"
+                        >
+                            Supprimer
                         </button>
                     </div>
-
-                    <p class="text-gray-800 font-semibold">
-                        {{ (item.price * item.quantity).toFixed(2) }}€
-                    </p>
-
-                    <button class="text-red-500 hover:text-red-700" @click="removeFromCart(item.id)">
-                        Supprimer
-                    </button>
                 </div>
             </div>
 
@@ -146,7 +169,7 @@ export default {
 
             <div v-if="cart.length && !isLoading" class="mt-6">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-semibold">Total:</h3>
+                    <h3 class="text-lg font-semibold">Total :</h3>
                     <p class="text-xl font-bold text-gray-800">{{ totalPrice.toFixed(2) }}€</p>
                 </div>
                 <router-link to="checkout">
@@ -156,6 +179,26 @@ export default {
                 </router-link>
             </div>
         </div>
+
+        <!-- Popup personnalisée -->
+        <div v-if="showPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div class="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+                <p class="text-center text-gray-700 font-medium">{{ popupMessage }}</p>
+                <div class="flex justify-center mt-4 space-x-4">
+                    <button
+                        @click="showPopup = false"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300"
+                    >
+                        Annuler
+                    </button>
+                    <button
+                        @click="popupCallback && popupCallback()"
+                        class="px-4 py-2 bg-primary text-white rounded-lg shadow hover:bg-primary-600"
+                    >
+                        Confirmer
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
-

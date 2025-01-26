@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen py-10">
-        <div class="container mx-auto max-w-4xl bg-white rounded-2xl shadow-md overflow-hidden">
+        <div class="container mx-auto max-w-4xl bg-white lg:rounded-2xl shadow-md overflow-hidden">
             <header class="bg-gradient-to-r from-black to-secondary text-white text-center py-10">
                 <h1 class="text-4xl font-extrabold">Vapostore</h1>
                 <p class="text-xl mt-2">Cigarettes Électroniques et E-Liquides</p>

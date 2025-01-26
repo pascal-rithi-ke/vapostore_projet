@@ -41,21 +41,27 @@ onMounted(fetchProducts);
 </script>
 
 <template>
-    <div class="container mx-auto my-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 my-8">
+        <!-- Breadcrumb -->
         <nav class="mb-4 text-sm text-gray-600">
             <router-link to="/" class="hover:underline">Accueil</router-link>
             <span class="mx-2">/</span>
             <span class="font-bold">{{ categoryName }}</span>
         </nav>
 
-        <h2 class="text-2xl font-bold mb-4">Nos Produits de la catégorie "{{ categoryName }}"</h2>
+        <!-- Titre de la catégorie -->
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center sm:text-left">
+            Nos Produits de la catégorie "{{ categoryName }}"
+        </h2>
 
+        <!-- Chargement -->
         <div v-if="loading" class="text-center">
             <p>Chargement des produits...</p>
         </div>
 
-        <div v-else-if="products.length" class="flex flex-wrap gap-6">
-            <div v-for="product in products" :key="product.id" class="bg-white text-center shadow-md rounded-lg w-64 p-4">
+        <!-- Liste des produits -->
+        <div v-else-if="products.length" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div v-for="product in products" :key="product.id" class="bg-white text-center shadow-md rounded-lg p-4">
                 <router-link :to="{
                     path: `/produit/${product.id}/name/${normalizeName(product.name)}`,
                     query: {
@@ -63,15 +69,22 @@ onMounted(fetchProducts);
                         categoryName: route.params.name
                     }
                 }">
-                <img :src="product.image" :alt="product.name" class="w-full h-32 object-cover rounded-lg" />
-                <h3 class="text-lg font-bold">{{ product.name }}</h3>
-                <p class="text-primary text-2xl font-bold mt-4">{{ product.price }} €</p>
+                    <img
+                        :src="product.image"
+                        :alt="product.name"
+                        class="w-full h-40 object-cover rounded-lg"
+                    />
+                    <h3 class="text-lg font-bold mt-2">{{ product.name }}</h3>
+                    <p class="text-primary text-2xl font-bold mt-4">{{ product.price }} €</p>
                 </router-link>
             </div>
         </div>
 
+        <!-- Message si aucun produit n'est disponible -->
         <div v-else>
-            <p class="text-gray-600">Désolé, nous n'avons actuellement pas de produits pour cette catégorie.</p>
+            <p class="text-gray-600 text-center">
+                Désolé, nous n'avons actuellement pas de produits pour cette catégorie.
+            </p>
         </div>
     </div>
 </template>

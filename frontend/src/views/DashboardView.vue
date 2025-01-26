@@ -1,11 +1,11 @@
 <script lang="ts">
 import axios from "axios";
 import { useAuthStore } from "../stores/auth";
+import { ref, reactive, computed } from "vue";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
-// Types pour les données
 interface Product {
     id: number;
     name: string;
@@ -27,39 +27,55 @@ interface Order {
 }
 
 export default {
-    data() {
-        return {
-            orders: [] as Order[], // Type explicite pour les commandes
-            isLoading: true,
-            error: null as string | null,
-        };
-    },
-    computed: {
-        userData() {
-            const authStore = useAuthStore();
-            return authStore.user; // Utilise les données utilisateur depuis Pinia
-        },
-    },
-    methods: {
-        async fetchOrders() {
+    setup() {
+        const orders = ref<Order[]>([]); // Liste des commandes
+        const isLoading = ref(true); // Indicateur de chargement
+        const error = ref<string | null>(null); // Gestion des erreurs
+        const isOrderOpen = reactive<Record<number, boolean>>({}); // État d'ouverture des commandes
+
+        const authStore = useAuthStore();
+        const userData = computed(() => authStore.user);
+
+        // Récupère les commandes
+        const fetchOrders = async () => {
             try {
                 const response = await axios.get("/api/orders");
-                this.orders = response.data; // Les données récupérées sont typées comme `Order[]`
-            } catch (error) {
-                console.error("Erreur lors de la récupération des commandes :", error);
-                this.error = "Impossible de charger vos commandes.";
+                orders.value = response.data;
+
+                // Initialise l'état d'ouverture pour chaque commande
+                orders.value.forEach((order) => {
+                    isOrderOpen[order.id] = false;
+                });
+            } catch (err) {
+                console.error("Erreur lors de la récupération des commandes :", err);
+                error.value = "Impossible de charger vos commandes.";
             } finally {
-                this.isLoading = false;
+                isLoading.value = false;
             }
-        },
-        async logout() {
-            const authStore = useAuthStore();
-            await authStore.logout(); // Déconnecte via le store
-            this.$router.push("/login"); // Redirige vers la page de connexion
-        },
-    },
-    async mounted() {
-        await this.fetchOrders(); // Charge les commandes au montage du composant
+        };
+
+        // Basculer les détails d'une commande
+        const toggleOrderDetails = (orderId: number) => {
+            isOrderOpen[orderId] = !isOrderOpen[orderId];
+        };
+
+        // Déconnecte l'utilisateur
+        const logout = async () => {
+            await authStore.logout();
+            window.location.href = "/login";
+        };
+
+        fetchOrders();
+
+        return {
+            orders,
+            isLoading,
+            error,
+            isOrderOpen,
+            toggleOrderDetails,
+            logout,
+            userData,
+        };
     },
 };
 </script>
@@ -86,33 +102,47 @@ export default {
                 <div v-if="isLoading" class="text-gray-500">Chargement des commandes...</div>
                 <div v-if="error" class="text-red-500">{{ error }}</div>
                 <div v-else-if="orders.length === 0" class="text-gray-700">Aucune commande trouvée.</div>
-                <div v-else class="space-y-8">
-                    <div v-for="order in orders" :key="order.id" class="border-b pb-6">
+                <div v-else class="space-y-4">
+                    <div
+                        v-for="order in orders"
+                        :key="order.id"
+                        class="border border-gray-300 rounded-lg p-4 bg-gray-50"
+                    >
                         <!-- Commande -->
-                        <div class="flex justify-between items-center mb-4">
+                        <div
+                            @click="toggleOrderDetails(order.id)"
+                            class="flex justify-between items-center cursor-pointer"
+                        >
                             <h3 class="text-lg font-bold text-gray-800">Commande #{{ order.id }}</h3>
                             <p class="text-gray-600">
                                 <strong>Date :</strong> {{ new Date(order.created_at).toLocaleDateString() }}
                             </p>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6 text-gray-500"
+                                :class="{'rotate-180': isOrderOpen[order.id]}"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                            </svg>
                         </div>
-                        <p class="text-gray-700 mb-4">
-                            <strong>Total :</strong> {{ order.total_price }}€
-                        </p>
 
-                        <!-- Produits -->
-                        <div class="space-y-4">
-                            <div v-for="product in order.cart.products" :key="product.id"
-                                class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm">
-                                <img :src="product.image" alt="Image produit"
-                                    class="w-16 h-16 object-cover rounded-md mr-4" />
-                                <div class="flex-grow">
+                        <!-- Détails de la commande -->
+                        <div v-if="isOrderOpen[order.id]" class="mt-4 space-y-4">
+                            <p class="text-gray-700">
+                                <strong>Total :</strong> {{ order.total_price }}€
+                            </p>
+                            <div v-for="product in order.cart.products" :key="product.id" class="flex items-center">
+                                <img :src="product.image" alt="Image produit" class="w-12 h-12 object-cover rounded-md mr-4" />
+                                <div>
                                     <h4 class="text-gray-800 font-semibold">{{ product.name }}</h4>
                                     <p class="text-sm text-gray-600">
-                                        Quantité : x{{ product.pivot.quantity }} | Prix unitaire : {{ product.pivot.price
-                                        }}€
+                                        Quantité : x{{ product.pivot.quantity }} | Prix unitaire : {{ product.pivot.price }}€
                                     </p>
                                 </div>
-                                <p class="text-gray-800 font-bold">
+                                <p class="ml-auto text-gray-800 font-bold">
                                     {{ (product.pivot.price * product.pivot.quantity).toFixed(2) }}€
                                 </p>
                             </div>
