@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TypeProduitController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartProductController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 
 // Routes pour les utilisateurs
@@ -36,6 +37,8 @@ Route::post('/add-product', [CartProductController::class, 'addProduct'])->middl
 Route::put('/update-cart-bulk', [CartProductController::class, 'updateCartBulk'])->middleware('auth:sanctum'); // Mettre à jour un produit dans le panier
 Route::delete('/remove-product', [CartProductController::class, 'deleteProduct'])->middleware('auth:sanctum'); // Supprimer un produit du panier
 
+// Route pour le checkout
+Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->middleware('auth:sanctum');
+
 // Route pour les commandes
-Route::get('/order{id}', [OrderController::class, 'showOne'])->middleware('auth:sanctum'); // Ajouter une commande validée
-Route::post('/order{id}', [OrderController::class, 'addOne'])->middleware('auth:sanctum'); // Ajouter une commande validée
+Route::get('/orders', [OrderController::class, 'getUserOrders'])->middleware('auth:sanctum'); // Afficher toutes les commandes d'un utilisateur

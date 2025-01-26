@@ -1,44 +1,100 @@
 <script lang="ts">
-import eCigarette from '../assets/e-cigarette.jpg';
-import eLiquide from '../assets/e-liquide.png';
+import axios from 'axios';
+
 export default {
     data() {
         return {
+            // Données utilisateur
             name: "",
             surname: "",
             email: "",
-            adresse: "",
-            numero: "",
-            code: "",
+            adresse: "", // Adresse saisie par l'utilisateur
+            code: "", // Code postal saisi par l'utilisateur
+            city: "",
 
-            cart: [
-                {
-                    id: 1,
-                    name: "Produt 1",
-                    price: 29.99,
-                    quantity: 1,
-                    image: eCigarette
-                },
-                {
-                    id: 2,
-                    name: "Produt 2",
-                    price: 49.99,
-                    quantity: 2,
-                    image: eLiquide
-                },
-            ],
+            // Panier
+            cart: [] as Array<{ id: number, name: string, price: number, quantity: number, image: string }>,
+            isLoading: true,
         };
     },
-    methods: {
-        handleSubmit() {
-            console.log("Name:", this.name);
-            console.log("Surname:", this.surname);
-            console.log("Email:", this.email);
-            console.log("adresse:", this.adresse);
-            console.log("numero:", this.numero);
-            console.log("code:", this.code);
-            // Ajoute ici la logique pour gérer l'inscription
+    computed: {
+        // Calcul du prix total du panier
+        totalPrice() {
+            return this.cart.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+            ).toFixed(2);
         },
+
+        // Calcul du nombre total de produits
+        totalQuantity() {
+            return this.cart.reduce((total, item) => total + item.quantity, 0);
+        },
+    },
+    methods: {
+        // Récupère les informations utilisateur
+        async fetchUserInfo() {
+            try {
+                const response = await axios.get('/api/user');
+                const user = response.data;
+
+                this.name = user.name || ""; // Nom de l'utilisateur
+                this.surname = user.surname || ""; // Prénom de l'utilisateur
+                this.email = user.email || ""; // Email de l'utilisateur
+            } catch (error) {
+                console.error('Erreur lors de la récupération des informations utilisateur :', error);
+                alert("Impossible de charger les informations utilisateur.");
+            }
+        },
+
+        // Récupère le panier
+        async fetchCart() {
+            try {
+                const response = await axios.get('/api/cart');
+                this.cart = response.data.data.map((item: { id: number, name: string, price: number, quantity: number, image: string }) => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    image: item.image || '',
+                }));
+            } catch (error) {
+                console.error('Erreur lors du chargement du panier :', error);
+                alert("Impossible de charger votre panier.");
+            }
+        },
+
+        // Soumet les données du checkout
+        async handleSubmit() {
+            if (!this.adresse || !this.code) {
+                alert("Veuillez renseigner l'adresse et le code postal.");
+                return;
+            }
+
+            try {
+                const response = await axios.post('/api/checkout', {
+                    address: this.adresse,
+                    postal_code: this.code,
+                    city: this.city,
+                    cart: this.cart,
+                    total_price: this.totalPrice,
+                    total_quantity: this.totalQuantity,
+                });
+                alert('Commande validée avec succès ! ID de commande : ' + response.data.order_id);
+                this.cart = []; // Réinitialise le panier après validation
+                // Redirige l'utilisateur vers la page d'accueil
+                this.$router.push('/dashboard');
+            } catch (error) {
+                console.error('Erreur lors de la validation de la commande :', error);
+                alert("Une erreur est survenue lors de la validation de votre commande.");
+            }
+        },
+    },
+    async mounted() {
+        // Charge les informations utilisateur et le panier lors du montage
+        await this.fetchUserInfo();
+        await this.fetchCart();
+        this.isLoading = false;
     },
 };
 </script>
@@ -51,37 +107,43 @@ export default {
                 <h2 class="text-lg text-gray-800 font-semibold">Vos informations</h2>
                 <form @submit.prevent="handleSubmit" class="space-y-4">
                     <div>
-                        <label for="surname" class="block text-sm text-gray-800 font-semibold">Nom</label>
-                        <input type="text" id="name" v-model="name" placeholder="Doe Updated"
+                        <label for="surname" class="block text-sm text-gray-800 font-semibold">Nom<span
+                        class="text-red-700">*</span></label>
+                        <input type="text" id="surname" v-model="surname"
                             class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
                             disabled />
                     </div>
                     <div>
-                        <label for="name" class="block text-sm text-gray-800 font-semibold">Prénom</label>
-                        <input type="text" id="name" v-model="name" placeholder="Jane"
+                        <label for="name" class="block text-sm text-gray-800 font-semibold">Prénom<span
+                        class="text-red-700">*</span></label>
+                        <input type="text" id="name" v-model="name"
                             class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
                             disabled />
                     </div>
                     <div>
-                        <label for="email" class="block text-sm text-gray-800 font-semibold">Email</label>
-                        <input type="email" id="email" v-model="email" placeholder="jane.doe@example.com"
+                        <label for="email" class="block text-sm text-gray-800 font-semibold">Email<span
+                        class="text-red-700">*</span></label>
+                        <input type="email" id="email" v-model="email"
                             class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
                             disabled />
                     </div>
                     <div>
-                        <label for="adresse" class="block text-sm text-gray-800 font-semibold">Adresse</label>
+                        <label for="adresse" class="block text-sm text-gray-800 font-semibold">Adresse<span
+                        class="text-red-700">*</span></label>
                         <input type="text" id="adresse" v-model="adresse"
-                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"/>
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
                     </div>
                     <div>
-                        <label for="numero" class="block text-sm text-gray-800 font-semibold">N° de rue ou bâtiment</label>
-                        <input type="text" id="numero" v-model="numero"
-                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"/>
+                        <label for="city" class="block text-sm text-gray-800 font-semibold">Ville<span
+                        class="text-red-700">*</span></label>
+                        <input type="text" id="city" v-model="city"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
                     </div>
                     <div>
-                        <label for="code" class="block text-sm text-gray-800 font-semibold">Code postale</label>
-                        <input type="text" id="code" v-model="code" min="1"
-                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"/>
+                        <label for="code" class="block text-sm text-gray-800 font-semibold">Code postal<span
+                        class="text-red-700">*</span></label>
+                        <input type="text" id="code" v-model="code"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
                     </div>
                 </form>
             </div>
@@ -102,33 +164,29 @@ export default {
                                 <p class="text-sm text-gray-800 font-semibold">Prix: {{ item.price }}€</p>
                             </div>
                         </div>
-
-                        <!-- Quantity Controls -->
                         <div class="flex items-center space-x-2">
                             <span class="px-3 py-1">x{{ item.quantity }}</span>
                         </div>
-
-                        <!-- Subtotal -->
                         <p class="text-gray-800 font-semibold">
                             {{ (item.price * item.quantity).toFixed(2) }}€
                         </p>
                     </div>
                 </div>
-
-                <!-- Empty Cart -->
-                <div v-else class="text-center text-gray-800 font-semibold">
-                    <p>Votre Panier est vide</p>
-                </div>
-
                 <!-- Cart Summary -->
                 <div v-if="cart.length" class="mt-6">
                     <div class="flex justify-between items-center">
                         <h3 class="text-lg font-semibold">Total:</h3>
-                        <p class="text-xl font-bold text-gray-800">129.97€</p>
+                        <p class="text-xl font-bold text-gray-800">
+                            {{ totalPrice }}€
+                        </p>
                     </div>
-                    <button type="submit" class="w-full px-4 py-2 text-white bg-primary rounded-md hover:bg-secondary focus:outline-none focus:ring focus:ring-blue-300 mt-6">Payer</button>
+                    <button @click="handleSubmit"
+                        class="w-full px-4 py-2 text-white bg-primary rounded-md hover:bg-secondary focus:outline-none focus:ring focus:ring-blue-300 mt-6">
+                        Payer
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </template>
+

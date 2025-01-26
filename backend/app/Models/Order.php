@@ -11,6 +11,11 @@ class Order extends Model
         'cart_id',
         'total_price',
         'item_number',
+
+        'address',
+        'city',
+        'postal_code',
+
         'status',
         'created_at',
         'updated_at',
@@ -29,5 +34,10 @@ class Order extends Model
     public function cart()
     {
         return $this->belongsTo(Cart::class);
+    }
+
+    public function products()
+    {
+        return $this->cart()->products();
     }
 }
