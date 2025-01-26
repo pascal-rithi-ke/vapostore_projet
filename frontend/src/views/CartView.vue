@@ -104,7 +104,7 @@ export default {
             </div>
 
             <div v-if="cart.length && !isLoading" class="space-y-4">
-                <div v-for="(item, index) in cart" :key="item.id"
+                <div v-for="(item, __) in cart" :key="item.id"
                     class="flex items-center justify-between border-b pb-4">
                     <div class="flex items-center space-x-4">
                         <img :src="item.image" alt="Product" class="w-16 h-16 object-cover rounded-md" />
