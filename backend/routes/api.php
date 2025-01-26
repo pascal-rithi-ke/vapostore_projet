@@ -9,7 +9,7 @@ use App\Http\Controllers\UserController;
 
 use App\Http\Controllers\TypeProduitController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\CartProductController;
 use App\Http\Controllers\OrderController;
 
 // Routes pour les utilisateurs
@@ -30,11 +30,9 @@ Route::get('/type-products', [TypeProduitController::class, 'showTypes']); // Af
 Route::get('/products/type/{id}', [ProductController::class, 'showAll']); // Afficher tous les produits par catégorie
 Route::get('/products/{id}', [ProductController::class, 'showOne']); // Afficher un produit spécifique
 
-// Route pour les paniers
-Route::get('/cart/{id}', [CartController::class, 'showOne'])->middleware('auth:sanctum'); // Afficher un produit du panier
-Route::post('/cart/{id}', [CartController::class, 'addOne'])->middleware('auth:sanctum'); // Ajouter un produit au panier
-Route::put('/cart/{id}', [CartController::class, 'update'])->middleware('auth:sanctum'); // Modifier un produit du panier
-Route::delete('/cart/{id}', [CartController::class, 'delete'])->middleware('auth:sanctum'); // Supprimer un produit du panier
+// Route pour les paniers produits
+Route::get('/cart{id}', [CartProductController::class, 'showOne'])->middleware('auth:sanctum'); // Afficher un panier spécifique
+Route::post('/add-product', [CartProductController::class, 'addProduct'])->middleware('auth:sanctum'); // Ajouter un produit au panier
 
 // Route pour les commandes
 Route::get('/order{id}', [OrderController::class, 'showOne'])->middleware('auth:sanctum'); // Ajouter une commande validée

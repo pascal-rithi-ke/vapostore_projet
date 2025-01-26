@@ -35,9 +35,21 @@ const goBack = () => {
     router.go(-1); // Retourne à la page précédente
 };
 
-const addToCart = () => {
-    // Logic to add the product to the cart
-    console.log(`Added ${quantity.value} of ${product.value?.name} to cart`);
+const addToCart = async () => {
+    if (!product.value) return;
+
+    try {
+        await axios.post('/api/add-product', {
+            product_id: product.value.id,
+            quantity: quantity.value,
+            price: product.value.price, // Assurez-vous que le produit a un champ 'price'
+        });
+        alert(`Produit ajouté au panier : ${product.value.name}`);
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout au panier :', error);
+        const errorMessage = (error as any).response?.data?.message || 'Impossible d\'ajouter le produit au panier.';
+        alert(errorMessage);
+    }
 };
 
 onMounted(fetchProduct);
