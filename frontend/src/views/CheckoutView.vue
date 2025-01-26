@@ -155,7 +155,7 @@ export default {
                 <h2 class="text-lg text-gray-800 font-semibold">Détails de la commande</h2>
                 <!-- Cart Items -->
                 <div v-if="cart.length" class="space-y-4">
-                    <div v-for="(item, index) in cart" :key="item.id"
+                    <div v-for="(item, __) in cart" :key="item.id"
                         class="flex items-center justify-between border-b pb-4">
                         <!-- Item Details -->
                         <div class="flex items-center space-x-4">
