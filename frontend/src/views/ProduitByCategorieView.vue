@@ -59,9 +59,7 @@ onMounted(fetchProducts);
 
         <!-- Liste des produits -->
         <div v-else-if="products.length" class="flex flex-wrap gap-6">
-            <div v-for="product in products" :key="product.id" class="bg-white shadow-md rounded-lg w-64 p-4">
-                <img :src="product.image" :alt="product.name" class="w-full h-32 object-cover rounded-lg" />
-                <h3 class="text-lg font-bold">{{ product.name }}</h3>
+            <div v-for="product in products" :key="product.id" class="bg-white text-center shadow-md rounded-lg w-64 p-4">
                 <router-link :to="{
                     path: `/produit/${product.id}/name/${normalizeName(product.name)}`,
                     query: {
@@ -69,12 +67,10 @@ onMounted(fetchProducts);
                         categoryName: route.params.name
                     }
                 }">
-                    <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">
-                        Voir plus
-                    </button>
-                </router-link>
-
+                <img :src="product.image" :alt="product.name" class="w-full h-32 object-cover rounded-lg" />
+                <h3 class="text-lg font-bold">{{ product.name }}</h3>
                 <p class="text-primary text-2xl font-bold mt-4">{{ product.price }} €</p>
+                </router-link>
             </div>
         </div>
 

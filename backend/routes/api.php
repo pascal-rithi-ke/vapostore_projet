@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 
 use App\Http\Controllers\UserController;
 
+use App\Http\Controllers\TypeProduitController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
@@ -21,6 +22,9 @@ Route::post('/register', [UserController::class, 'register']); // Ajouter un uti
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('/user', [AuthController::class, 'getUser'])->middleware('auth:sanctum');
+
+// Route pour les types de produits
+Route::get('/type-products', [TypeProduitController::class, 'showTypes']); // Afficher tous les types de produits
 
 // Route pour les produits
 Route::get('/products/type/{id}', [ProductController::class, 'showAll']); // Afficher tous les produits par catégorie

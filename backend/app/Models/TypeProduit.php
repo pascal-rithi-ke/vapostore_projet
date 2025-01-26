@@ -12,6 +12,8 @@ class TypeProduit extends Model
     //
     protected $fillable = [
         'libelle',
+        'image',
+        'description'
     ];
 
     public function products()

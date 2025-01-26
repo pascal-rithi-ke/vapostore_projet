@@ -78,9 +78,7 @@ export default {
                         </button>
                         <!-- Dropdown Menu -->
                         <ul class="absolute left-0 hidden w-44 bg-white shadow-md rounded-md group-hover:block">
-                            <li><router-link to="/presentation" class="block px-4 py-2 hover:bg-gray-100">Qui sommes
-                                    nous ?</router-link></li>
-                            <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Ouvrir un Vapostore</a></li>
+                            <li><router-link to="/presentation" class="block px-4 py-2 hover:bg-gray-100">Qui sommes nous ?</router-link></li>
                         </ul>
                     </li>
                 </ul>

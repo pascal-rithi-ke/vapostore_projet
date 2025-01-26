@@ -1,49 +1,29 @@
 <script setup lang="ts">
-import eCigarette from '../assets/e-cigarette.jpg';
-import eLiquide from '../assets/e-liquide.png';
-import materiel from '../assets/materiel.jpg';
-import DIY from '../assets/DIY.jpg';
-import accessoires from '../assets/accessoires.jpg';
-
 import normalizeName from '../utils/fct';
+import axios from 'axios';
+import { ref, onMounted } from 'vue';
 
-const products = [
-  {
-    name: "Accessoires",
-    description: "Tous les accessoires indispensables pour votre cigarette électronique à portée de main.",
-    image: accessoires,
-    link: "/produit/categorie/",
-    id: 1
-  },
-  {
-    name: "E-Cigarettes",
-    description: "Découvrez notre gamme de cigarettes électroniques, idéales pour débutants comme experts.",
-    image: eCigarette,
-    link: "/",
-    id: 2
-  },
-  {
-    name: "E-Liquides",
-    description: "Une sélection variée d'e-liquides aux saveurs uniques pour satisfaire tous les goûts.",
-    image: eLiquide,
-    link: "/",
-    id: 3
-  },
-  {
-    name: "Matériel",
-    description: "Retrouvez le matériel nécessaire pour une expérience de vape optimale.",
-    image: materiel,
-    link: "/",
-    id: 4
-  },
-  {
-    name: "DIY",
-    description: "Créez vos propres e-liquides avec nos kits DIY et personnalisez votre expérience.",
-    image: DIY,
-    link: "/",
-    id: 5
-  },
-];
+axios.defaults.baseURL = 'http://localhost:8000';
+
+interface Product {
+  id: number;
+  libelle: string;
+  description: string;
+  image: string;
+}
+
+
+const products = ref<Product[]>([]);
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('/api/type-products');
+    products.value = response.data;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  }
+});
+
 </script>
 
 <template>
@@ -54,18 +34,14 @@ const products = [
     </div>
     <div class="flex flex-wrap justify-center gap-6 mt-8">
       <!-- Carte Produit -->
-      <div v-for="(product, index) in products" :key="index"
-        class="bg-white shadow-md rounded-lg overflow-hidden w-80 flex flex-col items-center">
-        <img :src="product.image" :alt="product.name" class="w-full h-48 object-cover" />
-        <div class="p-4 text-center">
-          <h3 class="text-lg font-bold mb-2">{{ product.name }}</h3>
-          <p class="text-gray-600">{{ product.description }}</p>
-          <router-link :to="`/produit/categorie/${product.id}/${normalizeName(product.name)}`">
-            <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">
-              Découvrir
-            </button>
-          </router-link>
-        </div>
+      <div v-for="(product, index) in products" :key="index" class="flex flex-col items-center">
+        <router-link class="bg-white shadow-md rounded-lg overflow-hidden w-80" :to="`/produit/categorie/${product.id}/${normalizeName(product.libelle)}`">
+          <img :src="product.image" :alt="product.libelle" class="w-full h-48 object-cover" />
+          <div class="p-4 text-center">
+            <h3 class="text-lg font-bold mb-2">{{ product.libelle }}</h3>
+            <p class="text-gray-600">{{ product.description }}</p>
+          </div>
+        </router-link>
       </div>
     </div>
   </div>
