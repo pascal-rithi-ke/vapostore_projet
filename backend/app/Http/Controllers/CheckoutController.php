@@ -12,8 +12,8 @@ class CheckoutController extends Controller
             'address' => 'required|string',
             'city' => 'required|string',
             'postal_code' => 'required|string',
-            'total_price' => 'required|numeric',
-            'total_quantity' => 'required|integer',
+            'total_price' => 'required|numeric|min:1', // Assure un prix total valide
+            'total_quantity' => 'required|integer|min:1', // Assure qu'il y a au moins 1 article
         ]);
 
         $user = $request->user();
@@ -21,10 +21,11 @@ class CheckoutController extends Controller
         // Récupère le panier actif
         $cart = $user->activeCart();
 
-        if (!$cart) {
+        // Vérifie si le panier est vide ou inexistant
+        if (!$cart || $cart->products()->count() === 0) {
             return response()->json([
-                'message' => 'No active cart found.',
-            ], 404);
+                'message' => 'Votre panier est vide. Veuillez ajouter des produits avant de valider la commande.',
+            ], 400);
         }
 
         // Crée une nouvelle commande
@@ -46,7 +47,7 @@ class CheckoutController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Order processed successfully.',
+            'message' => 'Commande validée avec succès.',
             'order_id' => $order->id,
         ], 201);
     }

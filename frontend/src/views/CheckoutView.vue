@@ -1,6 +1,5 @@
 <script lang="ts">
 import axios from 'axios';
-import { ref } from 'vue';
 
 export default {
     data() {
@@ -59,6 +58,11 @@ export default {
             }
         },
         async handleSubmit() {
+            if (this.cart.length === 0) {
+                this.showPopupMessage("Votre panier est vide. Veuillez ajouter des produits avant de valider la commande.", "error");
+                return;
+            }
+
             if (!this.adresse || !this.code) {
                 this.showPopupMessage("Veuillez renseigner l'adresse et le code postal.", "error");
                 return;
@@ -112,28 +116,43 @@ export default {
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Vos informations</h2>
                 <form @submit.prevent="handleSubmit" class="space-y-4">
                     <div>
-                        <label for="surname" class="block text-sm font-semibold text-gray-800">Nom<span class="text-red-700">*</span></label>
-                        <input type="text" id="surname" v-model="surname" class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" disabled />
+                        <label for="surname" class="block text-sm font-semibold text-gray-800">Nom<span
+                                class="text-red-700">*</span></label>
+                        <input type="text" id="surname" v-model="surname"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
+                            disabled />
                     </div>
                     <div>
-                        <label for="name" class="block text-sm font-semibold text-gray-800">Prénom<span class="text-red-700">*</span></label>
-                        <input type="text" id="name" v-model="name" class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" disabled />
+                        <label for="name" class="block text-sm font-semibold text-gray-800">Prénom<span
+                                class="text-red-700">*</span></label>
+                        <input type="text" id="name" v-model="name"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
+                            disabled />
                     </div>
                     <div>
-                        <label for="email" class="block text-sm font-semibold text-gray-800">Email<span class="text-red-700">*</span></label>
-                        <input type="email" id="email" v-model="email" class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" disabled />
+                        <label for="email" class="block text-sm font-semibold text-gray-800">Email<span
+                                class="text-red-700">*</span></label>
+                        <input type="email" id="email" v-model="email"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
+                            disabled />
                     </div>
                     <div>
-                        <label for="adresse" class="block text-sm font-semibold text-gray-800">Adresse<span class="text-red-700">*</span></label>
-                        <input type="text" id="adresse" v-model="adresse" class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
+                        <label for="adresse" class="block text-sm font-semibold text-gray-800">Adresse<span
+                                class="text-red-700">*</span></label>
+                        <input type="text" id="adresse" v-model="adresse"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
                     </div>
                     <div>
-                        <label for="city" class="block text-sm font-semibold text-gray-800">Ville<span class="text-red-700">*</span></label>
-                        <input type="text" id="city" v-model="city" class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
+                        <label for="city" class="block text-sm font-semibold text-gray-800">Ville<span
+                                class="text-red-700">*</span></label>
+                        <input type="text" id="city" v-model="city"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
                     </div>
                     <div>
-                        <label for="code" class="block text-sm font-semibold text-gray-800">Code postal<span class="text-red-700">*</span></label>
-                        <input type="text" id="code" v-model="code" class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
+                        <label for="code" class="block text-sm font-semibold text-gray-800">Code postal<span
+                                class="text-red-700">*</span></label>
+                        <input type="text" id="code" v-model="code"
+                            class="w-full px-4 py-2 mt-1 text-sm border rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500" />
                     </div>
                 </form>
             </div>
@@ -161,7 +180,8 @@ export default {
                         <h3 class="text-lg font-semibold">Total :</h3>
                         <p class="text-xl font-bold text-gray-800">{{ totalPrice }}€</p>
                     </div>
-                    <button @click="handleSubmit" class="w-full mt-4 py-2 bg-primary text-white rounded-md hover:bg-secondary focus:outline-none focus:ring focus:ring-blue-300">
+                    <button @click="handleSubmit"
+                        class="w-full mt-4 py-2 bg-primary text-white rounded-md hover:bg-secondary focus:outline-none focus:ring focus:ring-blue-300">
                         Valider le panier
                     </button>
                 </div>
@@ -170,14 +190,13 @@ export default {
 
         <!-- Popup personnalisée -->
         <div v-if="showPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div
-                class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-center"
-                :class="popupType === 'success' ? 'border-green-500' : 'border-red-500'"
-            >
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-center"
+                :class="popupType === 'success' ? 'border-green-500' : 'border-red-500'">
                 <p class="text-lg font-medium" :class="popupType === 'success' ? 'text-green-600' : 'text-red-600'">
                     {{ popupMessage }}
                 </p>
-                <button @click="showPopup = false" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                <button @click="showPopup = false"
+                    class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                     OK
                 </button>
             </div>
