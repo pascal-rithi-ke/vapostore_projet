@@ -1,15 +1,12 @@
 <template>
     <div class="min-h-screen py-10">
         <div class="container mx-auto max-w-4xl bg-white rounded-2xl shadow-md overflow-hidden">
-            <!-- Header Section -->
             <header class="bg-gradient-to-r from-black to-secondary text-white text-center py-10">
                 <h1 class="text-4xl font-extrabold">Vapostore</h1>
                 <p class="text-xl mt-2">Cigarettes Électroniques et E-Liquides</p>
             </header>
 
-            <!-- Content Section -->
             <main class="p-8 space-y-8">
-                <!-- Section: Le Réseau Vapostore -->
                 <section>
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Le Réseau Vapostore</h2>
                     <p class="text-gray-700 leading-relaxed">
@@ -27,8 +24,7 @@
                         également dans l’information et l’accompagnement des vapoteurs.
                     </p>
                 </section>
-
-                <!-- Section: Ouvrir une Boutique -->
+                
                 <section>
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">
                         Ouvrir une Boutique de Cigarette Électronique

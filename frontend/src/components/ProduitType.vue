@@ -33,7 +33,6 @@ onMounted(async () => {
       <div class="w-32 h-1 bg-secondary mt-2"></div>
     </div>
     <div class="flex flex-wrap justify-center gap-6 mt-8">
-      <!-- Carte Produit -->
       <div v-for="(product, index) in products" :key="index" class="flex flex-col items-center">
         <router-link class="bg-white shadow-md rounded-lg overflow-hidden w-80" :to="`/produit/categorie/${product.id}/${normalizeName(product.libelle)}`">
           <img :src="product.image" :alt="product.libelle" class="w-full h-48 object-cover" />
