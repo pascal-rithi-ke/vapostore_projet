@@ -17,9 +17,8 @@ class CartProductController extends Controller
     
         $user = $request->user();
     
-        $cart = $user->carts()->active()->firstOrCreate([
-            'user_id' => $user->id,
-        ]);
+        // Récupérer le panier actif de l'utilisateur
+        $cart = $user->activeCart() ?? $user->carts()->create(['is_active' => true]);
     
         // Vérifier si le produit existe déjà dans le panier
         $existingProduct = $cart->products()->where('product_id', $request->product_id)->first();

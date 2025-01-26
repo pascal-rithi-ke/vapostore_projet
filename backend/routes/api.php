@@ -32,9 +32,59 @@ Route::get('/products/type/{id}', [ProductController::class, 'showAll']); // Aff
 Route::get('/products/{id}', [ProductController::class, 'showOne']); // Afficher un produit spécifique
 
 // Route pour les paniers produits
-Route::get('/cart', [CartProductController::class, 'showOne'])->middleware('auth:sanctum'); // Afficher un panier spécifique
+Route::get('/cart', function (Request $request) {
+    $user = $request->user();
+    $cart = $user->activeCart(); // Utilise la méthode activeCart pour récupérer le panier actif
+
+    if (!$cart) {
+        return response()->json([
+            'data' => [],
+            'message' => 'No active cart found.',
+        ], 200);
+    }
+
+    return response()->json([
+        'data' => $cart->products()->get()->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->pivot->price,
+                'quantity' => $product->pivot->quantity,
+                'image' => $product->image ?? null,
+            ];
+        }),
+        'message' => 'Active cart found.',
+    ], 200);
+})->middleware('auth:sanctum');
+
 Route::post('/add-product', [CartProductController::class, 'addProduct'])->middleware('auth:sanctum'); // Ajouter un produit au panier
-Route::put('/update-cart-bulk', [CartProductController::class, 'updateCartBulk'])->middleware('auth:sanctum'); // Mettre à jour un produit dans le panier
+
+Route::put('/update-cart-bulk', function (Request $request) {
+    $user = $request->user();
+    $cart = $user->activeCart();
+
+    if (!$cart) {
+        return response()->json([
+            'message' => 'No active cart found.',
+        ], 404);
+    }
+
+    foreach ($request->updates as $update) {
+        $productId = $update['product_id'];
+        $quantity = $update['quantity'];
+
+        if (is_null($quantity)) {
+            // Supprimer le produit du panier
+            $cart->products()->detach($productId);
+        } else {
+            // Mettre à jour la quantité
+            $cart->products()->updateExistingPivot($productId, ['quantity' => $quantity]);
+        }
+    }
+
+    return response()->json(['message' => 'Cart updated successfully.'], 200);
+})->middleware('auth:sanctum');
+
 Route::delete('/remove-product', [CartProductController::class, 'deleteProduct'])->middleware('auth:sanctum'); // Supprimer un produit du panier
 
 // Route pour le checkout

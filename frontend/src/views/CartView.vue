@@ -1,11 +1,11 @@
 <script lang="ts">
-import axios from 'axios';
+import axios from "axios";
 
 export default {
     data() {
         return {
             cart: [] as Array<{ id: number; name: string; price: number; quantity: number; image: string }>,
-            pendingUpdates: {} as Record<number, { quantity: number | null }>, // Stocke les modifications (quantity=null pour suppression)
+            pendingUpdates: {} as Record<number, { quantity: number | null }>, // Modifications en attente
             isLoading: true,
             error: null as string | null,
         };
@@ -19,66 +19,70 @@ export default {
         },
     },
     methods: {
+        // Récupère le panier actif depuis le backend
         async fetchCart() {
             try {
-                const response = await axios.get('/api/cart');
-                this.cart = response.data.data.map((item: { id: number; name: string; price: number; quantity: number; image?: string }) => ({
-                    id: item.id,
-                    name: item.name,
-                    price: item.price,
-                    quantity: item.quantity,
-                    image: item.image || '',
-                }));
+                const response = await axios.get("/api/cart"); // Appelle l'API pour le panier actif
+                this.cart = response.data.data.map(
+                    (item: { id: number; name: string; price: number; quantity: number; image?: string }) => ({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        image: item.image || "",
+                    })
+                );
             } catch (err) {
-                this.error = 'Erreur lors du chargement du panier.';
+                this.error = "Erreur lors du chargement du panier.";
                 console.error(err);
             } finally {
                 this.isLoading = false;
             }
         },
 
+        // Augmente la quantité d'un produit
         increaseQuantity(productId: number) {
-            const product = this.cart.find(item => item.id === productId);
+            const product = this.cart.find((item) => item.id === productId);
             if (product) {
                 product.quantity++;
                 this.pendingUpdates[productId] = { quantity: product.quantity };
             }
         },
 
+        // Diminue la quantité d'un produit
         decreaseQuantity(productId: number) {
-            const product = this.cart.find(item => item.id === productId);
+            const product = this.cart.find((item) => item.id === productId);
             if (product && product.quantity > 1) {
                 product.quantity--;
                 this.pendingUpdates[productId] = { quantity: product.quantity };
             }
         },
 
+        // Supprime un produit du panier
         removeFromCart(productId: number) {
-            // Supprimer localement
-            this.cart = this.cart.filter(item => item.id !== productId);
-
-            // Marquer pour suppression lors de la synchronisation
-            this.pendingUpdates[productId] = { quantity: null };
+            this.cart = this.cart.filter((item) => item.id !== productId); // Mise à jour locale
+            this.pendingUpdates[productId] = { quantity: null }; // Indique une suppression au backend
         },
 
+        // Synchronise les modifications avec le backend
         async syncCart() {
-            const updates = Object.keys(this.pendingUpdates).map(productId => ({
+            const updates = Object.keys(this.pendingUpdates).map((productId) => ({
                 product_id: Number(productId),
                 quantity: this.pendingUpdates[Number(productId)].quantity, // null pour suppression
             }));
 
-            if (updates.length === 0) return; // Rien à synchroniser
+            if (updates.length === 0) return; // Pas de mise à jour nécessaire
 
             try {
-                await axios.put('/api/update-cart-bulk', { updates });
-                this.pendingUpdates = {}; // Réinitialiser les mises à jour locales
+                await axios.put("/api/update-cart-bulk", { updates }); // Appelle l'API de mise à jour
+                this.pendingUpdates = {}; // Réinitialise les modifications locales
             } catch (err) {
-                console.error('Erreur lors de la synchronisation du panier', err);
+                console.error("Erreur lors de la synchronisation du panier", err);
             }
         },
     },
     async mounted() {
-        await this.fetchCart();
+        await this.fetchCart(); // Charge le panier actif au montage
 
         // Synchronisation périodique toutes les 5 secondes
         setInterval(this.syncCart, 5000);

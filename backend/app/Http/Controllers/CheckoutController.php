@@ -9,10 +9,8 @@ class CheckoutController extends Controller
     public function processCheckout(Request $request)
     {
         $request->validate([
-            'city' => 'required|string',
             'address' => 'required|string',
             'postal_code' => 'required|string',
-            'cart' => 'required|array',
             'total_price' => 'required|numeric',
             'total_quantity' => 'required|integer',
         ]);
@@ -20,7 +18,7 @@ class CheckoutController extends Controller
         $user = $request->user();
 
         // Récupère le panier actif
-        $cart = $user->carts()->active()->with('products')->first();
+        $cart = $user->activeCart();
 
         if (!$cart) {
             return response()->json([
@@ -30,16 +28,20 @@ class CheckoutController extends Controller
 
         // Crée une nouvelle commande
         $order = $user->orders()->create([
-            'city' => $request->city,
             'address' => $request->address,
             'postal_code' => $request->postal_code,
             'total_price' => $request->total_price,
-            'item_number' => $request->total_quantity,
+            'total_quantity' => $request->total_quantity,
             'cart_id' => $cart->id,
         ]);
 
-        // Met à jour le statut du panier
+        // Marque le panier comme inactif
         $cart->update(['is_active' => false]);
+
+        // Crée un nouveau panier actif
+        $user->carts()->create([
+            'is_active' => true,
+        ]);
 
         return response()->json([
             'message' => 'Order processed successfully.',

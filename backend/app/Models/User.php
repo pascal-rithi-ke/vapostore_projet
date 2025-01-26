@@ -69,4 +69,14 @@ class User extends Authenticatable
             $cart->save();
         }
     }
+
+    public function activeCart()
+    {
+        return $this->carts()->where('is_active', true)->first();
+    }
+
+    public function isAdmin()
+    {
+        return $this->status === 'admin';
+    }
 }

@@ -82,6 +82,7 @@ export default {
                 });
                 alert('Commande validée avec succès ! ID de commande : ' + response.data.order_id);
                 this.cart = []; // Réinitialise le panier après validation
+                await this.fetchCart(); // Recharge le panier
                 // Redirige l'utilisateur vers la page d'accueil
                 this.$router.push('/dashboard');
             } catch (error) {
