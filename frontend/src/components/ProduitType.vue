@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
 axios.defaults.baseURL = 'https://vapostore-projet.onrender.com';
+axios.defaults.withCredentials = true;
 
 interface Product {
   id: number;

@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
+axios.defaults.baseURL = "https://vapostore-projet.onrender.com";
+axios.defaults.withCredentials = true;
+
 /**
  * @typedef {Object} AuthState
  * @property {boolean} isAuthenticated - si l'utilisateur est authentifié
