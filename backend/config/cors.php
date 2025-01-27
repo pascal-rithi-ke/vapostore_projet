@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://vapostore-projet.vercel.app/'],
+    'allowed_origins' => ['https://vapostore-projet.vercel.app', 'https://vapostore-projet-niixcwvh9-pascal-rithi-kes-projects.vercel.app'],
 
     'allowed_origins_patterns' => [],
 
