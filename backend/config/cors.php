@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5173', 'https://vapostore-projet.vercel.app/'],
+    'allowed_origins' => ['https://vapostore-projet.vercel.app/'],
 
     'allowed_origins_patterns' => [],
 
