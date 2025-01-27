@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://vapostore-projet.vercel.app'],
+    'allowed_origins' => [
+        'https://vapostore-projet.vercel.app',
+        'https://vapostore-projet.onrender.com',
+    ],
 
     'allowed_origins_patterns' => [],
 
