@@ -1,20 +1,33 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM php:8.2.4-fpm
 
-COPY . .
+# Installer les dépendances nécessaires
+RUN apt-get update && apt-get install -y \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    git \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Configurer le répertoire de travail
+WORKDIR /var/www/html
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Étape 2 : Ajouter Nginx
+FROM nginx:latest
 
-CMD ["/start.sh"]
+# Copier la configuration personnalisée de Nginx
+COPY ./nginx.conf /etc/nginx/nginx.conf
+
+# Copier les fichiers de l'application PHP dans le conteneur
+COPY --from=0 /var/www/html /var/www/html
+
+# Exposer le port 80 pour Nginx
+EXPOSE 80
+
+# Lancer Nginx et PHP-FPM
+CMD ["nginx", "-g", "daemon off;"]

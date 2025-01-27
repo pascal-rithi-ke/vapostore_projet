@@ -18,6 +18,11 @@ use App\Http\Controllers\OrderController;
 #Route::put('/users/{id}', [UserController::class, 'update']);  // Mettre à jour un utilisateur
 #Route::delete('/users/{id}', [UserController::class, 'delete']); // Supprimer un utilisateur
 
+// Api is running
+Route::get('/', function () {
+    return response()->json(['message' => 'Api is running']);
+});
+
 // Routes pour l'authentification des utilisateurs
 Route::post('/register', [UserController::class, 'register']); // Ajouter un utilisateur
 Route::post('/login', [AuthController::class, 'login']);
