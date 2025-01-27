@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuthStore } from "../stores/auth";
 import { ref, reactive, computed } from "vue";
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "https://vapostore-projet.onrender.com";
 axios.defaults.withCredentials = true;
 
 interface Product {

@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/auth"; // Importer le store auth
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "https://vapostore-projet.onrender.com";
 
 export default {
     data() {
