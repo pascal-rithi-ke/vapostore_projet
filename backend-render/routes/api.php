@@ -25,7 +25,7 @@ Route::get('/', function () {
 
 // Routes pour l'authentification des utilisateurs
 Route::post('/register', [UserController::class, 'register']); // Ajouter un utilisateur
-Route::post('/login', [AuthController::class, 'login'])->middleware('auth:sanctum');
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('/user', [AuthController::class, 'getUser'])->middleware('auth:sanctum');
 
