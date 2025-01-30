@@ -22,15 +22,14 @@ Route::middleware(['web'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+// Route pour les types de produits
+Route::get('/type-products', [TypeProduitController::class, 'showTypes']); // Afficher tous les types de produits
+// Route pour les produits
+Route::get('/products/type/{id}', [ProductController::class, 'showAll']); // Afficher tous les produits par catégorie
+Route::get('/products/{id}', [ProductController::class, 'showOne']); // Afficher un produit spécifique
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [AuthController::class, 'getUser']);
-
-    // Route pour les types de produits
-    Route::get('/type-products', [TypeProduitController::class, 'showTypes']); // Afficher tous les types de produits
-
-    // Route pour les produits
-    Route::get('/products/type/{id}', [ProductController::class, 'showAll']); // Afficher tous les produits par catégorie
-    Route::get('/products/{id}', [ProductController::class, 'showOne']); // Afficher un produit spécifique
 
     // Route pour les paniers produits
     Route::get('/cart', function (Request $request) {
