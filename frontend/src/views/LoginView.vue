@@ -18,7 +18,15 @@ export default {
         async handleSubmit() {
             const authStore = useAuthStore(); // Accéder au store Pinia
             try {
-                await getCsrfToken();
+                await getCsrfToken(); // Initialiser le token CSRF
+                // Ajouter manuellement l'en-tête CSRF si nécessaire
+                const csrfToken = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('XSRF-TOKEN='))
+                    ?.split('=')[1];
+
+                axios.defaults.headers.common['X-XSRF-TOKEN'] = csrfToken;
+                
                 // Effectuer la requête de connexion
                 await axios.post("/api/login", {
                     email: this.email,
