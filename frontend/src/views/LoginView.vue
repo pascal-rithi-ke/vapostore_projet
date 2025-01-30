@@ -1,6 +1,7 @@
 <script>
 import axios from "axios";
 import { useAuthStore } from "../stores/auth"; // Importer le store auth
+import { getCsrfToken } from '../utils/fct.ts';
 
 axios.defaults.baseURL = "https://vapostore-projet.onrender.com";
 axios.defaults.withCredentials = true;
@@ -17,6 +18,8 @@ export default {
         async handleSubmit() {
             const authStore = useAuthStore(); // Accéder au store Pinia
             try {
+                await getCsrfToken();
+                
                 // Effectuer la requête de connexion
                 await axios.post("/api/login", {
                     email: this.email,

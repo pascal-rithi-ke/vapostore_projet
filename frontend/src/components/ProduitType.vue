@@ -13,7 +13,6 @@ interface Product {
   image: string;
 }
 
-
 const products = ref<Product[]>([]);
 
 onMounted(async () => {

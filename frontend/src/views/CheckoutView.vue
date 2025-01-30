@@ -33,6 +33,7 @@ export default {
     methods: {
         async fetchUserInfo() {
             try {
+                axios.get('/sanctum/csrf-cookie');
                 const response = await axios.get('/api/user');
                 const user = response.data;
 
@@ -69,6 +70,7 @@ export default {
             }
 
             try {
+                axios.get('/sanctum/csrf-cookie');
                 const response = await axios.post('/api/checkout', {
                     address: this.adresse,
                     postal_code: this.code,

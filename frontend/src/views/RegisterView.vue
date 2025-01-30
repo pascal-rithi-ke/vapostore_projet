@@ -15,33 +15,38 @@ export default {
         };
     },
     methods: {
-        handleSubmit() {
+        async handleSubmit() {
             if (this.password !== this.confirmPassword) {
                 this.showPopupMessage("Les mots de passe ne correspondent pas", "error");
                 return;
             }
 
-            axios
-                .post("/api/register", {
+            try {
+                // Initialiser le token CSRF
+                await axios.get('/sanctum/csrf-cookie');
+
+                // Effectuer la requête d'inscription
+                await axios.post("/api/register", {
                     name: this.name,
                     surname: this.surname,
                     email: this.email,
                     password: this.password,
                     password_confirmation: this.confirmPassword,
-                })
-                .then(() => {
-                    this.showPopupMessage("Inscription réussie ! Vous serez redirigé vers la page de connexion.", "success");
-                    setTimeout(() => {
-                        this.$router.push("/login");
-                    }, 3000); // Redirection après 3 secondes
-                })
-                .catch((error) => {
-                    if (axios.isAxiosError(error)) {
-                        this.showPopupMessage(error.response?.data?.message || "Erreur d'inscription", "error");
-                    } else {
-                        this.showPopupMessage("Erreur d'inscription", "error");
-                    }
                 });
+
+                // Succès : Afficher un message et rediriger
+                this.showPopupMessage("Inscription réussie ! Vous serez redirigé vers la page de connexion.", "success");
+                setTimeout(() => {
+                    this.$router.push("/login");
+                }, 3000);
+            } catch (error) {
+                // Gestion des erreurs
+                if (axios.isAxiosError(error)) {
+                    this.showPopupMessage(error.response?.data?.message || "Erreur d'inscription", "error");
+                } else {
+                    this.showPopupMessage("Erreur d'inscription", "error");
+                }
+            }
         },
         showPopupMessage(message: string, type: "success" | "error") {
             this.popupMessage = message;
@@ -53,8 +58,8 @@ export default {
                 this.showPopup = false;
             }, 3000);
         },
-    },
-};
+    }
+}
 </script>
 
 <template>
