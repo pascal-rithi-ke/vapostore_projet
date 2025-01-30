@@ -19,7 +19,6 @@ export default {
             const authStore = useAuthStore(); // Accéder au store Pinia
             try {
                 await getCsrfToken();
-                
                 // Effectuer la requête de connexion
                 await axios.post("/api/login", {
                     email: this.email,
