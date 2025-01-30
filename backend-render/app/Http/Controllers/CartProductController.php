@@ -13,6 +13,10 @@ class CartProductController extends Controller
             'product_id' => 'required|integer|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
+        ], [
+            'product_id.exists' => "Le produit n'existe pas",
+            'quantity.min' => 'La quantité doit être minimun à 1',
+            'price.min' => 'Le prix doit être un nombre positif',
         ]);
     
         $user = $request->user();

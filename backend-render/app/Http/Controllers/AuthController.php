@@ -10,6 +10,11 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
         // Validation des informations d'identification
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return $this->failedRequest('', 'Invalid email address or password', 400);

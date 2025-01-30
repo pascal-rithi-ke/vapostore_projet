@@ -9,20 +9,21 @@ class UserController extends Controller
 {
     // Ajouter un utilisateur
     public function register(Request $request){
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        $validated["password"] = bcrypt($validated["password"]);
-
-        $user = User::create($validated);
-        if($user){
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'surname' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+    
+            $validated['password'] = bcrypt($validated['password']);
+    
+            $user = User::create($validated);
+    
             return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
-        }else{
-            return response()->json(['message' => 'User not created'], 400);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred while creating the user.'], 500);
         }
     }
 
