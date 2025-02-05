@@ -14,7 +14,8 @@ export default normalizeName;
 
 export const getCsrfToken = async () => {
     try {
-        await axios.get('/sanctum/csrf-cookie'); // Initialisation des cookies CSRF
+        const response = await axios.get('/sanctum/csrf-cookie');
+        console.log('CSRF token initialisé:', response);
     } catch (error) {
         console.error('Erreur lors de la récupération du token CSRF :', error);
     }

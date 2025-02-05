@@ -22,13 +22,15 @@ export const useAuthStore = defineStore("auth", {
         async fetchAuthStatus() {
             try {
                 const response = await axios.get("/api/user");
+                console.log("Réponse utilisateur :", response.data);
                 this.isAuthenticated = true;
                 this.user = response.data;
             } catch (error) {
+                console.error("Erreur lors de la récupération de l'état d'authentification :", error);
                 this.isAuthenticated = false;
                 this.user = null;
             }
-        },
+        },        
         async logout() {
             try {
                 await axios.post("/api/logout");
