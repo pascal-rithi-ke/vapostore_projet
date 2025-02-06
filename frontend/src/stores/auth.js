@@ -26,7 +26,7 @@ export const useAuthStore = defineStore("auth", {
                 this.isAuthenticated = true;
                 this.user = response.data;
             } catch (error) {
-                console.error("Erreur lors de la récupération de l'état d'authentification :", error);
+                //console.error("Erreur lors de la récupération de l'état d'authentification :", error);
                 this.isAuthenticated = false;
                 this.user = null;
             }
@@ -38,6 +38,8 @@ export const useAuthStore = defineStore("auth", {
                 this.user = null;
             } catch (error) {
                 console.error("Erreur lors de la déconnexion :", error);
+                this.isAuthenticated = false;
+                this.user = null;
             }
         },
     },
