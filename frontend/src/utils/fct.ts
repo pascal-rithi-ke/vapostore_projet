@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configuration globale d'axios
-axios.defaults.baseURL = 'https://vapostore-projet.onrender.com';
+axios.defaults.baseURL = 'http://127.0.0.1:8000';
 axios.defaults.withCredentials = true; // Assure que les cookies sont inclus
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

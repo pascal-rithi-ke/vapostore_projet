@@ -1,9 +1,7 @@
 <script>
 import axios from "axios";
-import { useAuthStore } from "../stores/auth"; // Importer le store auth
-import { getCsrfToken } from '../utils/fct.ts';
 
-axios.defaults.baseURL = "https://vapostore-projet.onrender.com";
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 axios.defaults.withCredentials = true;
 
 export default {
@@ -16,27 +14,12 @@ export default {
     },
     methods: {
         async handleSubmit() {
-            const authStore = useAuthStore(); // Accéder au store Pinia
             try {
-                await getCsrfToken(); // Initialiser le token CSRF
-                // Ajouter manuellement l'en-tête CSRF si nécessaire
-                const csrfToken = document.cookie
-                    .split('; ')
-                    .find(row => row.startsWith('XSRF-TOKEN='))
-                    ?.split('=')[1];
-
-                axios.defaults.headers.common['X-XSRF-TOKEN'] = csrfToken;
-                
                 // Effectuer la requête de connexion
                 await axios.post("/api/login", {
                     email: this.email,
                     password: this.password,
                 });
-
-                // Mettre à jour l'état d'authentification dans Pinia
-                await authStore.fetchAuthStatus();
-
-                // Rediriger vers le tableau de bord
                 this.$router.push("/dashboard");
             } catch (error) {
                 if (axios.isAxiosError(error)) {

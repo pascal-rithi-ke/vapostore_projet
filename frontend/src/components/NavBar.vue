@@ -10,11 +10,8 @@ export default {
 
     setup() {
         const authStore = useAuthStore();
-        authStore.fetchAuthStatus(); // Vérifie l'état d'authentification au montage
 
-        const menuOpen = ref(false); // État du menu burger
-
-        // Détermine dynamiquement le lien
+        const menuOpen = ref(false);
         const accountLink = computed(() => (authStore.isAuthenticated ? '/dashboard' : '/login'));
 
         return { authStore, accountLink, menuOpen };

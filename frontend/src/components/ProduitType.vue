@@ -3,7 +3,7 @@ import normalizeName from '../utils/fct';
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
-axios.defaults.baseURL = 'https://vapostore-projet.onrender.com';
+axios.defaults.baseURL = 'http://127.0.0.1:8000';
 axios.defaults.withCredentials = true;
 
 interface Product {

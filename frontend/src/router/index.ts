@@ -89,7 +89,9 @@ router.beforeEach(async (to, __, next) => {
     const authStore = useAuthStore();
 
     // Mets à jour l'état d'authentification (utile au chargement initial)
-    await authStore.fetchAuthStatus();
+    if (!authStore.isAuthenticated && authStore.user === null) {
+        await authStore.fetchAuthStatus();
+    }
 
     // Si la route nécessite une authentification et que l'utilisateur n'est pas connecté
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {
