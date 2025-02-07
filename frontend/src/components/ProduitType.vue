@@ -3,8 +3,9 @@ import normalizeName from '../utils/fct';
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
+axios.defaults.baseURL = 'https://334a-2a01-e0a-a05-b240-6d34-e6ed-670e-dc4f.ngrok-free.app';
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common["ngrok-skip-browser-warning"] = "true";
 
 interface Product {
   id: number;

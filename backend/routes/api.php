@@ -40,6 +40,7 @@ Route::get('/products/{id}', [ProductController::class, 'showOne']); // Afficher
 Route::get('/cart', function (Request $request) {
     $user = $request->user();
     $cart = $user->activeCart(); // Utilise la méthode activeCart pour récupérer le panier actif
+    $orders = $user->orders()->with(['cart.products'])->get();
 
     if (!$cart) {
         return response()->json([
@@ -49,13 +50,16 @@ Route::get('/cart', function (Request $request) {
     }
 
     return response()->json([
-        'data' => $cart->products()->get()->map(function ($product) {
+        'data' => $orders->map(function ($order) {
             return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->pivot->price,
-                'quantity' => $product->pivot->quantity,
+                'id' => $order->id,
+                'name' => $order->name,
+                'price' => $order->pivot->price,
+                'quantity' => $order->pivot->quantity,
                 'image' => $product->image ?? null,
+                'address' => $order->address,
+                'postal_code' => $order->postal_code,
+                'city' => $order->city,
             ];
         }),
         'message' => 'Active cart found.',

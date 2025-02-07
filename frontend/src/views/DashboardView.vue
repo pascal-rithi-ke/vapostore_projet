@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuthStore } from "../stores/auth";
 import { ref, reactive, computed } from "vue";
 
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+axios.defaults.baseURL = "https://334a-2a01-e0a-a05-b240-6d34-e6ed-670e-dc4f.ngrok-free.app";
 axios.defaults.withCredentials = true;
 
 interface Product {
@@ -24,6 +24,9 @@ interface Order {
     cart: {
         products: Product[];
     };
+    address : string,
+    postal_code : string,
+    city : string,
 }
 
 export default {
@@ -132,7 +135,7 @@ export default {
                         <!-- Détails de la commande -->
                         <div v-if="isOrderOpen[order.id]" class="mt-4 space-y-4">
                             <p class="text-gray-700">
-                                <strong>Total :</strong> {{ order.total_price }}€
+                                <strong>Adresse de livraison :</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}
                             </p>
                             <div v-for="product in order.cart.products" :key="product.id" class="flex items-center">
                                 <img :src="product.image" alt="Image produit" class="w-12 h-12 object-cover rounded-md mr-4" />
@@ -146,6 +149,9 @@ export default {
                                     {{ (product.pivot.price * product.pivot.quantity).toFixed(2) }}€
                                 </p>
                             </div>
+                            <p class="text-gray-700">
+                                <strong>Total :</strong> {{ order.total_price }}€
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+axios.defaults.baseURL = "https://334a-2a01-e0a-a05-b240-6d34-e6ed-670e-dc4f.ngrok-free.app";
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common["ngrok-skip-browser-warning"] = "true";
 
 /**
  * @typedef {Object} AuthState
