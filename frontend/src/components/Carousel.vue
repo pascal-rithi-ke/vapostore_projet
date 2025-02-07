@@ -126,7 +126,7 @@ export default defineComponent({
                 v-for="(__, index) in slides"
                 :key="index"
                 class="w-3 h-3 rounded-full"
-                :class="currentIndex === index ? 'bg-white' : 'bg-gray-400'"
+                :class="currentIndex === index ? 'bg-black' : 'bg-gray-400'"
                 @click="goToSlide(index)"
             ></button>
         </div>
