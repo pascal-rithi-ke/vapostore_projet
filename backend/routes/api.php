@@ -40,7 +40,7 @@ Route::get('/products/{id}', [ProductController::class, 'showOne']); // Afficher
 Route::get('/cart', function (Request $request) {
     $user = $request->user();
     $cart = $user->activeCart(); // Utilise la méthode activeCart pour récupérer le panier actif
-    $orders = $user->orders()->with(['cart.products'])->get();
+    $products = $cart->products;
 
     if (!$cart) {
         return response()->json([
@@ -50,18 +50,15 @@ Route::get('/cart', function (Request $request) {
     }
 
     return response()->json([
-        'data' => $orders->map(function ($order) {
-            return [
-                'id' => $order->id,
-                'name' => $order->name,
-                'price' => $order->pivot->price,
-                'quantity' => $order->pivot->quantity,
-                'image' => $product->image ?? null,
-                'address' => $order->address,
-                'postal_code' => $order->postal_code,
-                'city' => $order->city,
-            ];
-        }),
+        'data' => $products->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'quantity' => $product->pivot->quantity, // Utilise la table pivot pour la quantité
+                        'image' => $product->image ?? null,
+                    ];
+            }),
         'message' => 'Active cart found.',
     ], 200);
 })->middleware('auth:sanctum');
